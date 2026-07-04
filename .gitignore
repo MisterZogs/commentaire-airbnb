@@ -1,0 +1,17 @@
+# Credentials et données sensibles
+.env
+auth/airbnb_state.json
+
+# Base de données locale
+reviews.db
+
+# Logs et screenshots
+logs/
+screenshots/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
