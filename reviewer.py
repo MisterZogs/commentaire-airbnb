@@ -378,16 +378,36 @@ def submit_review(
                         pass
                 return False
 
+            def _is_intro_page() -> bool:
+                """Détecte la page d'intro du wizard (pas d'étoiles, pas de textarea)."""
+                has_stars = page.locator("[role='group'] button, [role='radiogroup'] button").count() > 0
+                has_textarea = page.locator("textarea").count() > 0
+                has_radio = page.locator("input[type='radio']").count() > 0
+                return not has_stars and not has_textarea and not has_radio
+
             # Étape intro : cliquer "Continuer" pour démarrer le wizard
-            has_radio = page.locator("input[type='radio']").count() > 0
-            has_textarea = page.locator("textarea").count() > 0
-            if not has_radio and not has_textarea:
+            if _is_intro_page():
                 print("  Page intro — clic Continuer...")
                 _click_next()
+
+            intro_count = 0  # nombre de fois qu'on revient sur l'intro dans la boucle
 
             # Boucle sur les pages du wizard (étoiles, recommandation, commentaire)
             for step in range(30):
                 _screenshot(page, f"{reservation_code}_step{step+1}")
+
+                # Si on est revenu à la page d'intro, on clique Continuer une fois de plus
+                # mais si ça arrive deux fois, c'est une boucle : les étoiles ne se sélectionnent pas
+                if _is_intro_page():
+                    intro_count += 1
+                    if intro_count >= 2:
+                        raise RuntimeError(
+                            "Wizard cyclé vers page intro — _fill_stars() échoue à sélectionner les étoiles. "
+                            "Session peut-être expirée, ou sélecteurs à mettre à jour."
+                        )
+                    print(f"  Étape {step+1} : retour intro (cycle {intro_count}) — re-clic Continuer")
+                    _click_next()
+                    continue
 
                 # Si on atteint le champ commentaire, on sort de la boucle
                 if page.locator("textarea").count() > 0:
