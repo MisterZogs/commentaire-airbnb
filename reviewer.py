@@ -378,7 +378,7 @@ def submit_review(
                 _click_next()  # attend 5s pour que la propreté page charge
 
             # Boucle sur les pages du wizard (étoiles, recommandation, commentaire)
-            for step in range(15):
+            for step in range(30):
                 _screenshot(page, f"{reservation_code}_step{step+1}")
 
                 # Si on atteint le champ commentaire, on sort de la boucle
