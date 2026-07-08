@@ -412,7 +412,7 @@ def submit_review(
                     break
                 print(f"  Étape {step+1} : avancé")
             else:
-                raise RuntimeError("Wizard trop long ou boucle infinie — arrêt après 15 étapes.")
+                raise RuntimeError("Wizard trop long ou boucle infinie — arrêt après 30 étapes.")
 
             print("  Écriture du commentaire...")
             _fill_comment(page, comment)
