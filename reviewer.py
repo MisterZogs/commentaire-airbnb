@@ -359,13 +359,21 @@ def submit_review(
 
             _screenshot(page, f"{reservation_code}_before")
 
-            def _click_next():
-                """Clique sur Suivant/Continuer/Next du wizard Airbnb et attend le rendu React."""
+            def _click_next() -> bool:
+                """Clique sur Suivant/Continuer/Next et retourne True si la page a changé."""
+                url_before = page.url
+                content_before = page.locator("main, [role='main'], body").first.inner_html()[:500]
                 for name in ["Suivant", "Continuer", "Continue", "Next"]:
                     try:
                         page.get_by_role("button", name=name).click(timeout=3000)
                         time.sleep(5)  # SPA React : transition lente, 5s nécessaires
-                        return True
+                        url_after = page.url
+                        content_after = page.locator("main, [role='main'], body").first.inner_html()[:500]
+                        if url_after != url_before or content_after != content_before:
+                            return True
+                        # Bouton cliqué mais page inchangée = boucle infinie
+                        print(f"  Bouton '{name}' cliqué mais page inchangée — arrêt.")
+                        return False
                     except PWTimeout:
                         pass
                 return False
@@ -375,7 +383,7 @@ def submit_review(
             has_textarea = page.locator("textarea").count() > 0
             if not has_radio and not has_textarea:
                 print("  Page intro — clic Continuer...")
-                _click_next()  # attend 5s pour que la propreté page charge
+                _click_next()
 
             # Boucle sur les pages du wizard (étoiles, recommandation, commentaire)
             for step in range(30):
@@ -408,11 +416,11 @@ def submit_review(
 
                 # Avancer à la page suivante
                 if not _click_next():
-                    print(f"  Étape {step+1} : impossible d'avancer (bouton Suivant non trouvé)")
+                    print(f"  Étape {step+1} : impossible d'avancer")
                     break
                 print(f"  Étape {step+1} : avancé")
             else:
-                raise RuntimeError("Wizard trop long ou boucle infinie — arrêt après 30 étapes.")
+                raise RuntimeError("Wizard trop long — arrêt après 30 étapes.")
 
             print("  Écriture du commentaire...")
             _fill_comment(page, comment)
