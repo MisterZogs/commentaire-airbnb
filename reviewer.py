@@ -470,7 +470,10 @@ def submit_review(
             return True, found_review_url
 
         except Exception as e:
-            _screenshot(page, f"{reservation_code}_error")
+            try:
+                _screenshot(page, f"{reservation_code}_error")
+            except Exception:
+                pass
             print(f"  Erreur pour {reservation_code} : {e}")
             return False, found_review_url
 
