@@ -362,16 +362,15 @@ def submit_review(
             def _click_next() -> bool:
                 """Clique sur Suivant/Continuer/Next et retourne True si la page a changé."""
                 url_before = page.url
-                content_before = page.locator("main, [role='main'], body").first.inner_html()[:500]
+                content_before = page.locator("main, [role='main'], body").first.inner_html()
                 for name in ["Suivant", "Continuer", "Continue", "Next"]:
                     try:
                         page.get_by_role("button", name=name).click(timeout=3000)
                         time.sleep(5)  # SPA React : transition lente, 5s nécessaires
                         url_after = page.url
-                        content_after = page.locator("main, [role='main'], body").first.inner_html()[:500]
+                        content_after = page.locator("main, [role='main'], body").first.inner_html()
                         if url_after != url_before or content_after != content_before:
                             return True
-                        # Bouton cliqué mais page inchangée = boucle infinie
                         print(f"  Bouton '{name}' cliqué mais page inchangée — arrêt.")
                         return False
                     except PWTimeout:
