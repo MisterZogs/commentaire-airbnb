@@ -1,9 +1,10 @@
 # Guide d'installation — Agent Avis Airbnb Automatique
 
 Ce script poste automatiquement un avis 5 étoiles + commentaire à chaque
-locataire, 24-48h après son départ. Il tourne pour son propre compte : il
-n'y a pas de service central, chacun héberge sa propre copie avec ses
-propres identifiants Airbnb.
+locataire, 48h après son départ par défaut (réglable via `REVIEW_DELAY_HOURS`
+dans `.env`, voir étape 4). Il tourne pour son propre compte : il n'y a pas
+de service central, chacun héberge sa propre copie avec ses propres
+identifiants Airbnb.
 
 ## Ce dont tu as besoin
 
