@@ -41,7 +41,7 @@ def send_alert(subject: str, body: str):
 
     msg = MIMEText(body, "plain", "utf-8")
     msg["Subject"] = f"[Agent Airbnb] {subject}"
-    msg["From"] = "noreply@lifaia.com"
+    msg["From"] = os.getenv("SMTP_FROM", smtp_user)
     msg["To"] = notify_email
 
     try:
